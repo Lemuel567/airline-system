@@ -1,8 +1,8 @@
 import express from 'express'
-import bcrypt from 'bcryprt'
+import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import prisma from '../utils/db.js'
-const router = express()
+const router = express.Router()
 
 router.post('/register', async (req,res) => {
     const {email,password} = req.body
@@ -14,16 +14,8 @@ router.post('/register', async (req,res) => {
                 message: "username or password needed"
             })
         }
-        const checkEmail = await prisma.user.findUnique({
-            where: {
-                email
-            }
-            })
-          
         
-              if(checkEmail){
-                return res.send("email exists, use another email")
-        }
+        
             const hashedPassword = bcrypt.hashSync(password, 8)
         const newUser = await prisma.user.create({
             data: {
@@ -34,7 +26,8 @@ router.post('/register', async (req,res) => {
         })
               res.status(201).json({
                 status: "success",
-                message:"account created successfully"
+                message:"account created successfully",
+                email
 
          
         })
@@ -47,7 +40,7 @@ router.post('/register', async (req,res) => {
     }
 })
 
-router.post('/login', (req,res) => {
+router.post('/login', async (req,res) => {
     const {email, password} = req.body
 try{
     
@@ -58,22 +51,29 @@ try{
             })
 
         }
+        
 
-       const user = prisma.findUnique({
+       const user = await prisma.user.findUnique({
             where: {
                 email
             }
         })
     
-     if(!bcrypt.compareSync(password, user.Password) || !user ){
+     if(!bcrypt.compareSync(password, user.password) || !user ){
         return res.status(401).json({
             status: "failed",
             message: "incorrent credentials"
         })
      }
+     const token = jwt.sign(
+            { id: user.id }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '24h' }
+        )
      res.status(201).json({
         status: "success",
-        message: "log in successful"
+        message: "log in successful",
+        token
      })
     
         
@@ -86,3 +86,4 @@ try{
     
 })
 
+export default router

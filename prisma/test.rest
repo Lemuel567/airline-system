@@ -1,0 +1,16 @@
+POST http://localhost:5004/auth/register
+Content-Type: application/json
+
+{
+  "email": "lem@example.com",
+  "password": "password123"
+}
+
+###login
+POST http://localhost:5004/auth/localhost:5001/auth/login
+Content-Type: application/json
+
+{
+  "email": "lem@example.com",
+  "password": "password123"
+}
