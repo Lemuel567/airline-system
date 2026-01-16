@@ -26,7 +26,7 @@ router.post('/register', async (req,res) => {
         })
               res.status(201).json({
                 status: "success",
-                message:"account created successfully",
+                message:"account successfully created",
                 email
 
          
@@ -47,7 +47,7 @@ try{
     if(!email || !password){
            return res.status(401).json({
                 status: "failed",
-                message: "username or password needed"
+                message: "username or password missing"
             })
 
         }
