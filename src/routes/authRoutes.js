@@ -47,7 +47,7 @@ try{
     if(!email || !password){
            return res.status(401).json({
                 status: "failed",
-                message: "username or password missing"
+                message: "username or password must be provided"
             })
 
         }
